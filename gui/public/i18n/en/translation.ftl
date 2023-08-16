@@ -260,6 +260,8 @@ settings-sidebar-utils = Utilities
 settings-sidebar-serial = Serial console
 settings-sidebar-appearance = Appearance
 settings-sidebar-notifications = Notifications
+settings-sidebar-firmware-tool = DIY Firmware Tool
+
 
 ## SteamVR settings
 settings-general-steamvr = SteamVR
@@ -506,6 +508,31 @@ settings-osc-vmc-vrm-file_select = Drag & drop a model to use, or <u>browse</u>
 settings-osc-vmc-anchor_hip = Anchor at hips
 settings-osc-vmc-anchor_hip-description = Anchor the tracking at the hips, useful for seated VTubing. If disabling, load a VRM model.
 settings-osc-vmc-anchor_hip-label = Anchor at hips
+
+settings-firmware-tool = DIY Firmware tool
+settings-firmware-tool-description =
+    Allows to configure and flash your DIY slimevr trackers
+
+settings-firmware-tool-board-step = Select your Board
+settings-firmware-tool-board-step-description = Select one of the boards listed below.
+
+settings-firmware-tool-board-pins-step = Verify the pins
+settings-firmware-tool-board-pins-step-description =
+    Please verify that the selected pins are correct.
+    If you followed the slimevr documentation the defaults values should be correct
+
+settings-firmware-tool-add-imus-step = Declare your IMUs
+settings-firmware-tool-board-pins-step-description =
+    Please add the inmus that your tracker have
+    If you followed the slimevr documentation the defaults values should be correct
+
+firmware-board-BOARD_SLIMEVR = SlimeVR Board
+firmware-board-BOARD_SLIMEVR_DEV = SlimeVR Dev Board
+firmware-board-BOARD_NODEMCU = NodeMCU
+firmware-board-BOARD_WROOM32 = ESP Wroom 32
+firmware-board-BOARD_WEMOSD1MINI = WEMOS D1 Mini
+firmware-board-BOARD_TTGO_TBASE = TTGO TBASE
+firmware-board-BOARD_ESP01 = ESP01
 
 ## Setup/onboarding menu
 onboarding-skip = Skip setup

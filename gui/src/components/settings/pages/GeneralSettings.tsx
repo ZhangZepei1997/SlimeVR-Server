@@ -78,7 +78,7 @@ interface SettingsForm {
     yawResetTaps: number;
     fullResetTaps: number;
     mountingResetTaps: number;
-    numberTrackersOverThreshold;
+    numberTrackersOverThreshold: number;
   };
   legTweaks: {
     correctionStrength: number;
@@ -1004,6 +1004,9 @@ export function GeneralSettings() {
                 <NumberSelector
                   control={control}
                   name="tapDetection.numberTrackersOverThreshold"
+                  label={l10n.getString(
+                    'settings-general-gesture_control-numberTrackersOverThreshold'
+                  )}
                   valueLabelFormat={(value) =>
                     l10n.getString(
                       'settings-general-gesture_control-trackers',

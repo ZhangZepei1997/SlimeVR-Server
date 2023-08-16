@@ -52,6 +52,7 @@ import { useBreakpoint } from './hooks/breakpoint';
 import { VRModePage } from './components/vr-mode/VRModePage';
 import { InterfaceSettings } from './components/settings/pages/InterfaceSettings';
 import { error, log } from './utils/logging';
+import { FirmwareToolSettings } from './components/firmware-tool/FirmwareTool';
 
 export const GH_REPO = 'SlimeVR/SlimeVR-Server';
 export const VersionContext = createContext('');
@@ -90,6 +91,14 @@ function Layout() {
           element={
             <MainLayoutRoute background={false} isMobile={isMobile}>
               <TrackerSettingsPage />
+            </MainLayoutRoute>
+          }
+        />
+        <Route
+          path="/firmware-tool"
+          element={
+            <MainLayoutRoute isMobile={isMobile} widgets={false}>
+              <FirmwareToolSettings />
             </MainLayoutRoute>
           }
         />

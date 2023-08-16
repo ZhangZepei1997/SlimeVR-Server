@@ -48,6 +48,12 @@ export function Home() {
       >
         <HeadsetIcon></HeadsetIcon>
       </NavLink>
+      <NavLink
+        to="/firmware-tool"
+        className="flex justify-center items-center fill-background-10"
+      >
+        Create New Trackers
+      </NavLink>
       <div className="h-full overflow-y-auto">
         <div
           className={classNames(

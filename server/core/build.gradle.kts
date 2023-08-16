@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
 	kotlin("jvm")
 	kotlin("plugin.serialization")
+	id("org.openapi.generator") version "6.6.0"
 	`java-library`
 }
+
 
 // FIXME: Please replace these to Java 11 as that's what they actually are
 kotlin {
@@ -73,7 +75,32 @@ dependencies {
 	testImplementation(platform("org.junit:junit-bom:5.9.0"))
 	testImplementation("org.junit.jupiter:junit-jupiter")
 	testImplementation("org.junit.platform:junit-platform-launcher")
+
+	implementation("org.openapitools:openapi-generator-gradle-plugin:6.6.0")
+
 }
 tasks.test {
 	useJUnitPlatform()
+}
+
+
+tasks {
+	val openApiGenerate by getting
+
+	compileJava {
+		dependsOn(openApiGenerate)
+	}
+}
+
+
+openApiGenerate {
+	generatorName.set("kotlin")
+	inputSpec.set("$rootDir/server/core/resources/firmware-tool-api.yaml")
+	outputDir.set("$buildDir/generated")
+	apiPackage.set("dev.slimevr.firmwaretoolapi.api")
+	invokerPackage.set("dev.slimevr.firmwaretoolapi.invoker")
+	modelPackage.set("dev.slimevr.firmwaretoolapi.model")
+	configOptions.set(mapOf(
+		"dateLibrary" to "java17",
+	))
 }

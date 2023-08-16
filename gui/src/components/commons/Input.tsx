@@ -21,6 +21,7 @@ export const InputInside = forwardRef<
     type,
     placeholder,
     label,
+    disabled,
     autocomplete,
     name,
     onChange,
@@ -38,16 +39,27 @@ export const InputInside = forwardRef<
 
   const classes = useMemo(() => {
     const variantsMap = {
-      primary: classNames('bg-background-60 border-background-60'),
-      secondary: classNames('bg-background-50 border-background-50'),
-      tertiary: classNames('bg-background-40 border-background-40'),
+      primary: classNames({
+        'placeholder:text-background-30 bg-background-60 border-background-60': !disabled,
+        'text-background-30 placeholder:text-background-30 border-background-70 bg-background-70': disabled
+      }),
+      secondary: classNames({
+        'placeholder:text-background-30 bg-background-50 border-background-50': !disabled,
+        'text-background-40 placeholder:text-background-40 border-background-70 bg-background-70': disabled
+      }),
+      tertiary: classNames({
+        'placeholder:text-background-30 bg-background-40 border-background-40': !disabled,
+        'text-background-30 placeholder:text-background-30 border-background-70 bg-background-70': disabled
+      }),
     };
 
     return classNames(
       variantsMap[variant],
-      'w-full focus:ring-transparent focus:ring-offset-transparent focus:outline-transparent rounded-md focus:border-accent-background-40 placeholder:text-background-30 text-standard relative'
+      'w-full focus:ring-transparent focus:ring-offset-transparent',
+      'focus:outline-transparent rounded-md focus:border-accent-background-40',
+      'text-standard relative transition-colors'
     );
-  }, [variant]);
+  }, [variant, disabled]);
 
   return (
     <label className="flex flex-col gap-1">
@@ -60,7 +72,8 @@ export const InputInside = forwardRef<
           autoComplete={autocomplete ? 'off' : 'on'}
           onChange={onChange}
           name={name}
-          value={value || ''}
+          value={disabled ? placeholder : value || ''}  // Do we want that behaviour ?
+          disabled={disabled}
           ref={ref}
         ></input>
         {type === 'password' && (
@@ -83,6 +96,7 @@ export const Input = ({
   placeholder,
   label,
   autocomplete,
+  disabled,
   variant = 'primary',
   rules,
 }: {
@@ -103,6 +117,7 @@ export const Input = ({
           placeholder={placeholder}
           variant={variant}
           value={value}
+          disabled={disabled}
           onChange={onChange}
           ref={ref}
           name={name}

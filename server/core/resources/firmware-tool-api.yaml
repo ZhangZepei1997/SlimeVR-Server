@@ -1,0 +1,368 @@
+openapi: 3.0.0
+paths:
+  /firmwares:
+    get:
+      operationId: FirmwareController_getFirmwares
+      parameters: []
+      responses:
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Firmware'
+      tags: &ref_0
+        - slimevr
+  /firmwares/build:
+    post:
+      operationId: FirmwareController_buildAll
+      summary: ''
+      description: Build a specific configuration of the firmware
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BuildFirmwareDTO'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuildResponse'
+        '400':
+          description: Version not found
+      tags: *ref_0
+  /firmwares/build-status/{id}:
+    get:
+      operationId: FirmwareController_buildStatus
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags: *ref_0
+  /firmwares/boards:
+    get:
+      operationId: FirmwareController_getBoardsTypes
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BoardTypeBoard'
+      tags: *ref_0
+  /firmwares/versions:
+    get:
+      operationId: FirmwareController_getVersions
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReleaseDTO'
+      tags: *ref_0
+  /firmwares/imus:
+    get:
+      operationId: FirmwareController_getIMUSTypes
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IMUDTO'
+      tags: *ref_0
+  /firmwares/batteries:
+    get:
+      operationId: FirmwareController_getBatteriesTypes
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      tags: *ref_0
+  /firmwares/default-config/{board}:
+    get:
+      operationId: FirmwareController_getDefaultConfig
+      parameters:
+        - name: board
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuildFirmwareDTO'
+      tags: *ref_0
+  /firmwares/{id}:
+    get:
+      operationId: FirmwareController_getFirmware
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '404':
+          description: ''
+        default:
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Firmware'
+      tags: *ref_0
+info:
+  title: Slimevr API
+  description: Slimy things
+  version: '1.0'
+  contact: {}
+tags:
+  - name: slimevr
+    description: ''
+servers: []
+components:
+  schemas:
+    BoardPins:
+      type: object
+      properties:
+        imuSDA:
+          type: string
+        imuSCL:
+          type: string
+        led:
+          type: string
+          default: '2'
+      required:
+        - imuSDA
+        - imuSCL
+    FirmwareBoardDTO:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - BOARD_SLIMEVR
+            - BOARD_SLIMEVR_DEV
+            - BOARD_NODEMCU
+            - BOARD_WROOM32
+            - BOARD_WEMOSD1MINI
+            - BOARD_TTGO_TBASE
+            - BOARD_ESP01
+        pins:
+          $ref: '#/components/schemas/BoardPins'
+        enableLed:
+          type: boolean
+          default: true
+      required:
+        - type
+    IMUConfigDTO:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - IMU_MPU9250
+            - IMU_MPU6500
+            - IMU_BNO080
+            - IMU_BNO085
+            - IMU_BNO055
+            - IMU_BNO086
+            - IMU_MPU6050
+            - IMU_BMI160
+            - IMU_ICM20948
+            - IMU_BMI270
+        rotation:
+          type: number
+        imuINT:
+          type: string
+      required:
+        - type
+        - rotation
+    BatteryDTO:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - BAT_EXTERNAL
+            - BAT_INTERNAL
+            - BAT_MCP3021
+            - BAT_INTERNAL_MCP3021
+        resistance:
+          type: number
+          default: 180
+        pin:
+          type: string
+      required:
+        - type
+        - resistance
+        - pin
+    BuildFirmwareDTO:
+      type: object
+      properties:
+        version:
+          type: string
+        board:
+          $ref: '#/components/schemas/FirmwareBoardDTO'
+        imus:
+          type: array
+          items:
+            $ref: '#/components/schemas/IMUConfigDTO'
+        battery:
+          $ref: '#/components/schemas/BatteryDTO'
+      required:
+        - version
+        - board
+        - imus
+    FirmwareFile:
+      type: object
+      properties:
+        url:
+          type: string
+        offset:
+          type: number
+      required:
+        - url
+        - offset
+    Firmware:
+      type: object
+      properties:
+        id:
+          type: string
+        releaseID:
+          type: string
+        buildStatus:
+          type: string
+          enum:
+            - BUILDING
+            - DONE
+            - FAILED
+        buildConfig:
+          $ref: '#/components/schemas/BuildFirmwareDTO'
+        firmwareFiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/FirmwareFile'
+        creationDate:
+          format: date-time
+          type: string
+        updateDate:
+          format: date-time
+          type: string
+      required:
+        - id
+        - releaseID
+        - buildStatus
+        - buildConfig
+        - creationDate
+        - updateDate
+    BuildResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum:
+            - BUILDING
+            - DONE
+            - FAILED
+        firmwareFiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/FirmwareFile'
+      required:
+        - id
+        - status
+    BoardTypeBoard:
+      type: object
+      properties:
+        boardType:
+          type: string
+          enum:
+            - BOARD_SLIMEVR
+            - BOARD_SLIMEVR_DEV
+            - BOARD_NODEMCU
+            - BOARD_WROOM32
+            - BOARD_WEMOSD1MINI
+            - BOARD_TTGO_TBASE
+            - BOARD_ESP01
+        board:
+          type: string
+      required:
+        - boardType
+        - board
+    ReleaseDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+        name:
+          type: string
+        zipball_url:
+          type: string
+        prerelease:
+          type: boolean
+        draft:
+          type: boolean
+      required:
+        - id
+        - url
+        - name
+        - zipball_url
+        - prerelease
+        - draft
+    IMUDTO:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - IMU_MPU9250
+            - IMU_MPU6500
+            - IMU_BNO080
+            - IMU_BNO085
+            - IMU_BNO055
+            - IMU_BNO086
+            - IMU_MPU6050
+            - IMU_BMI160
+            - IMU_ICM20948
+            - IMU_BMI270
+        hasIntPin:
+          type: boolean
+      required:
+        - type
+        - hasIntPin

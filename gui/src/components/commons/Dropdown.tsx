@@ -21,6 +21,7 @@ export function Dropdown({
   variant = 'primary',
   alignment = 'right',
   display = 'fit',
+  maxHeight = '50vh',
   placeholder,
   control,
   getValues,
@@ -33,15 +34,16 @@ export function Dropdown({
   display?: 'fit' | 'block';
   placeholder: string;
   control: Control<any>;
-  getValues: UseFormGetValues<any>;
+  getValues?: UseFormGetValues<any>;
   name: string;
   items: DropdownItem[];
+  maxHeight?: string | number;
 }) {
   const itemRefs: Record<string, HTMLLIElement> = {};
   const [isOpen, setOpen] = useState(false);
   const formValue = {
     ...{ value: useWatch({ control, name }) as string },
-    ...{ value: getValues(name) as string },
+    ...(getValues ? ({ value: getValues(name) as string }) : {}),
   };
   useEffect(() => {
     if (!isOpen) return;
@@ -161,7 +163,7 @@ export function Dropdown({
             {isOpen && (
               <div
                 className={classNames(
-                  'absolute z-10 rounded shadow min-w-max max-h-[50vh]',
+                  'absolute z-[999] rounded shadow min-w-max',
                   'overflow-y-auto dropdown-scroll overflow-x-hidden',
                   display === 'fit' && 'w-fit',
                   display === 'block' && 'w-full',
@@ -173,6 +175,10 @@ export function Dropdown({
                   alignment === 'right' && 'right-0',
                   alignment === 'left' && 'left-0'
                 )}
+
+                style={{
+                  maxHeight: maxHeight
+                }}
               >
                 <ul className="py-1 text-sm flex flex-col">
                   {items.map((item) => (
