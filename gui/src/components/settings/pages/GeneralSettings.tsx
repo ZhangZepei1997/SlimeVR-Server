@@ -454,7 +454,7 @@ export function GeneralSettings() {
                 label={l10n.getString(
                   'settings-general-tracker_mechanics-filtering-type-none'
                 )}
-                desciption={l10n.getString(
+                description={l10n.getString(
                   'settings-general-tracker_mechanics-filtering-type-none-description'
                 )}
                 value={FilteringType.NONE}
@@ -465,7 +465,7 @@ export function GeneralSettings() {
                 label={l10n.getString(
                   'settings-general-tracker_mechanics-filtering-type-smoothing'
                 )}
-                desciption={l10n.getString(
+                description={l10n.getString(
                   'settings-general-tracker_mechanics-filtering-type-smoothing-description'
                 )}
                 value={FilteringType.SMOOTHING}
@@ -476,7 +476,7 @@ export function GeneralSettings() {
                 label={l10n.getString(
                   'settings-general-tracker_mechanics-filtering-type-prediction'
                 )}
-                desciption={l10n.getString(
+                description={l10n.getString(
                   'settings-general-tracker_mechanics-filtering-type-prediction-description'
                 )}
                 value={FilteringType.PREDICTION}

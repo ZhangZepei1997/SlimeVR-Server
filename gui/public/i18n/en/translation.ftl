@@ -522,9 +522,21 @@ settings-firmware-tool-board-pins-step-description =
     If you followed the slimevr documentation the defaults values should be correct
 
 settings-firmware-tool-add-imus-step = Declare your IMUs
-settings-firmware-tool-board-pins-step-description =
+settings-firmware-tool-add-imus-step-description =
     Please add the inmus that your tracker have
     If you followed the slimevr documentation the defaults values should be correct
+
+settings-firmware-tool-select-firmware-step = Select the firmware version
+settings-firmware-tool-select-firmware-step-description =
+    Please choose what version of the firmware you want to use
+
+settings-firmware-tool-build-step = Building the firmware
+settings-firmware-tool-build-step-description =
+    The firmware is building, please wait
+
+settings-firmware-tool-flash-method-step = Flashing Method
+settings-firmware-tool-flash-method-step-description =
+    Please the flashing method you want to use
 
 firmware-board-BOARD_SLIMEVR = SlimeVR Board
 firmware-board-BOARD_SLIMEVR_DEV = SlimeVR Dev Board

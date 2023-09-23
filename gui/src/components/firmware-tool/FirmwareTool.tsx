@@ -1,10 +1,8 @@
 import { useLocalization } from '@fluent/react';
-import { useWebsocketAPI } from '../../hooks/websocket-api';
 import { Typography } from '../commons/Typography';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   FirmwareToolContextC,
-  useFirmwareTool,
   useFirmwareToolContext,
 } from '../../hooks/firmware-tool';
 import { AddImusStep } from './AddImusStep';
@@ -13,13 +11,14 @@ import { BoardPinsStep } from './BoardPinsStep';
 import VerticalStepper from '../commons/VerticalStepper';
 import { LoaderIcon, SlimeState } from '../commons/icon/LoaderIcon';
 import { Button } from '../commons/Button';
+import { SelectFirmwareStep } from './SelectFirmwareStep';
+import { BuildStep } from './BuildStep';
+import { FlashingMethodStep } from './FlashingMethodStep';
 
 function FirmwareToolContent() {
   const { l10n } = useLocalization();
   const context = useFirmwareToolContext();
   const { isError, isGlobalLoading: isLoading, retry } = context;
-  const { sendRPCPacket, useRPCPacket } = useWebsocketAPI();
-
   return (
     <FirmwareToolContextC.Provider value={context}>
       <div className="flex flex-col bg-background-70 p-4 rounded-md overflow-y-auto h-full">
@@ -46,15 +45,15 @@ function FirmwareToolContent() {
                 Oops the firmware tool is not available at the moment. Come back
                 later!
               </Typography>
-              <Button variant='primary' onClick={retry}>Retry</Button>
+              <Button variant="primary" onClick={retry}>
+                Retry
+              </Button>
             </div>
           )}
-           {isLoading && (
+          {isLoading && (
             <div className="w-full flex flex-col justify-center items-center gap-3 h-full ">
               <LoaderIcon slimeState={SlimeState.JUMPY}></LoaderIcon>
-              <Typography variant="section-title">
-                Loading....
-              </Typography>
+              <Typography variant="section-title">Loading....</Typography>
             </div>
           )}
           {!isError && !isLoading && (
@@ -63,6 +62,15 @@ function FirmwareToolContent() {
                 { component: SelectBoardStep, title: 'Slect your board' },
                 { component: BoardPinsStep, title: 'Check the pins!' },
                 { component: AddImusStep, title: 'Declare your imus!' },
+                {
+                  component: SelectFirmwareStep,
+                  title: 'Select the firmware version',
+                },
+                {
+                  component: FlashingMethodStep,
+                  title: 'Flashing Method',
+                },
+                { component: BuildStep, title: 'Building' },
               ]}
             />
           )}

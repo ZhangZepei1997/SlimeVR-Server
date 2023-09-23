@@ -1,25 +1,27 @@
 import { createContext, useContext, useState } from 'react';
-import {
-  BoardTypeBoard,
-  BuildFirmwareDTO,
-  FirmwareBoardDTO,
-  IMUConfigDTO,
-} from '../firmware-tool-api/firmwareToolSchemas';
-import {
-  fetchFirmwareControllerGetDefaultConfig,
-  useFirmwareControllerGetDefaultConfig,
-  useHealthControllerGetHealth,
-} from '../firmware-tool-api/firmwareToolComponents';
-import { BoardPinsForm } from '../components/firmware-tool/AddImusStep';
+import { fetchGetFirmwaresDefaultConfigBoard, useGetHealth } from '../firmware-tool-api/firmwareToolComponents';
+import { BuildResponseDTO, CreateBoardConfigDTO, CreateBuildFirmwareDTO, DefaultBuildConfigDTO } from '../firmware-tool-api/firmwareToolSchemas';
+import { BoardPinsForm } from '../components/firmware-tool/BoardPinsStep';
+import { DeepPartial } from 'react-hook-form';
+import { FlashingMethod } from 'solarxr-protocol';
+
+export type PartialBuildFirmware = DeepPartial<CreateBuildFirmwareDTO>
+export type FirmwareBuildStatus = BuildResponseDTO & { message: string };
+export type SelectedDevice = { type: FlashingMethod, deviceId: string | number };
+
 
 export interface FirmwareToolContext {
-  selectBoard: (boardType: BoardTypeBoard['boardType']) => Promise<void>;
+  selectBoard: (boardType: CreateBoardConfigDTO['type']) => Promise<void>;
+  selectVersion: (version: CreateBuildFirmwareDTO['version']) => void;
   updatePins: (form: BoardPinsForm) => void;
-  addImu: () => void;
+  updateImus: (imus: CreateBuildFirmwareDTO['imusConfig']) => void;
+  setBuildStatus: (buildStatus: FirmwareBuildStatus) => void;
+  selectDevice: (device: SelectedDevice | null) => void;
   retry: () => void;
-  selectedBoard: BoardTypeBoard['boardType'] | null;
-  defaultConfig: BuildFirmwareDTO | null;
-  newConfig: BuildFirmwareDTO | null;
+  buildStatus: FirmwareBuildStatus;
+  defaultConfig: DefaultBuildConfigDTO | null;
+  newConfig: PartialBuildFirmware | null;
+  selectedDevice: SelectedDevice | null;
   isStepLoading: boolean;
   isGlobalLoading: boolean;
   isError: boolean;
@@ -37,61 +39,58 @@ export function useFirmwareTool() {
   return context;
 }
 
+
 export function useFirmwareToolContext(): FirmwareToolContext {
-  const [selectedBoard, setSelectedBoard] = useState<
-    BoardTypeBoard['boardType'] | null
-  >(null);
-  const [defaultConfig, setDefaultConfig] = useState<BuildFirmwareDTO | null>(null);
-  const [newConfig, setNewConfig] = useState<BuildFirmwareDTO | null>(null);
+  const [defaultConfig, setDefaultConfig] = useState<DefaultBuildConfigDTO | null>(null);
+  const [selectedDevice, selectDevice] = useState<SelectedDevice | null>(null);
+  const [newConfig, setNewConfig] = useState<PartialBuildFirmware>({});
   const [isLoading, setLoading] = useState(false);
-  const { isError, isInitialLoading, refetch } = useHealthControllerGetHealth({  }, { networkMode: 'online' });
+  const { isError, isInitialLoading, refetch } = useGetHealth({});
+  const [buildStatus, setBuildStatus] = useState<FirmwareBuildStatus>({ status: 'BUILDING', id: '', message: 'Building Firmware ....' });
 
   return {
-    selectBoard: async (boardType: BoardTypeBoard['boardType']) => {
-      setSelectedBoard(boardType);
+    selectBoard: async (boardType: CreateBoardConfigDTO['type']) => {
       setLoading(true);
-      const boardDefaults = await fetchFirmwareControllerGetDefaultConfig({
+      const boardDefaults = await fetchGetFirmwaresDefaultConfigBoard({
         pathParams: { board: boardType },
       });
       setDefaultConfig(boardDefaults);
-      const config = JSON.parse(JSON.stringify(boardDefaults)) as BuildFirmwareDTO; // Deep copy
-      config.imus.splice(1, 1);
-      setNewConfig(config);
+      setNewConfig((currConfig) => ({ ...currConfig, boardConfig: { ...currConfig.boardConfig, type: boardType } }))
       setLoading(false);
     },
     updatePins: (form: BoardPinsForm) => {
       setNewConfig((currConfig) => {
-        if (!currConfig) throw new Error('unreachable')
         return {
           ...currConfig,
-          board: {
-            ...currConfig.board,
-            pins: form.pins,
-            enableLed: form.enableLed,
-          },
+          imusConfig: [...currConfig?.imusConfig || []],
+          boardConfig: {
+            ...currConfig.boardConfig,
+            ...form,
+          }
         };
       });
     },
-    addImu: () => {
+    updateImus: (imus: CreateBuildFirmwareDTO['imusConfig']) => {
       setNewConfig((currConfig) => {
-        if (!currConfig || !defaultConfig) throw new Error('unreachable')
-        const itemToAdd =
-          currConfig.imus.length > 0
-            ? currConfig.imus[0]
-            : defaultConfig.imus[1] as IMUConfigDTO;
-        console.log(currConfig.imus, itemToAdd)
         return {
           ...currConfig,
-          imus: [...currConfig.imus, itemToAdd],
-        };
-      });
+          imusConfig: imus.map(({ rotation, ...fields }) => ({ ...fields, rotation: Number(rotation) })) // Make sure that the rotation is handled as number
+          // imusConfig: imus
+        }
+      })
     },
     retry: async () => {
       setLoading(true);
       await refetch();
       setLoading(false);
     },
-    selectedBoard,
+    selectVersion: (version: CreateBuildFirmwareDTO['version']) => {
+      setNewConfig((currConfig) => ({ ...currConfig, version }))
+    },
+    setBuildStatus,
+    selectDevice,
+    selectedDevice,
+    buildStatus,
     defaultConfig,
     newConfig,
     isStepLoading: isLoading,

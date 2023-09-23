@@ -70,6 +70,10 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 	implementation("it.unimi.dsi:fastutil:8.5.12")
 
+	// Allow the use of reflection
+	implementation(kotlin("reflect"))
+
+
 	testImplementation(kotlin("test"))
 	// Use JUnit test framework
 	testImplementation(platform("org.junit:junit-bom:5.9.0"))

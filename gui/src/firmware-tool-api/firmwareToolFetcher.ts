@@ -1,6 +1,7 @@
 import { FirmwareToolContext } from './firmwareToolContext';
 
-const baseUrl = 'http://localhost:3000';
+export const firmwareToolBaseUrl = import.meta.env.VITE_FIRMWARE_TOOL_URL ?? 'http://localhost:3000';
+export const firmwareToolS3BaseUrl = import.meta.env.VITE_FIRMWARE_TOOL_S3_URL ?? 'http://localhost:9099';
 
 export type ErrorWrapper<TError> =
   | TError
@@ -63,7 +64,7 @@ export async function firmwareToolFetch<
     }
 
     const response = await window.fetch(
-      `${baseUrl}${resolveUrl(url, queryParams, pathParams)}`,
+      `${firmwareToolBaseUrl}${resolveUrl(url, queryParams, pathParams)}`,
       {
         signal,
         method: method.toUpperCase(),

@@ -14,6 +14,7 @@ abstract class SerialHandler {
 	abstract fun factoryResetRequest()
 	abstract fun infoRequest()
 	abstract fun closeSerial()
+	abstract fun write(buff: ByteArray)
 	abstract fun setWifi(ssid: String, passwd: String)
 
 	companion object {
@@ -57,6 +58,8 @@ class SerialHandlerStub() : SerialHandler() {
 	override fun infoRequest() {}
 
 	override fun closeSerial() {}
+
+	override fun write(buff: ByteArray) {}
 
 	override fun setWifi(ssid: String, passwd: String) {}
 }

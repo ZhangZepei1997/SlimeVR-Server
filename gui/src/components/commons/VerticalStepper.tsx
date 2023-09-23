@@ -1,8 +1,16 @@
 import classNames from 'classnames';
 import { CheckIcon } from './icon/CheckIcon';
 import { Typography } from './Typography';
-import { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import {
+  FC,
+  ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useElemSize } from '../../hooks/layout';
+import { useDebouncedEffect } from '../../hooks/timeout';
 
 export function VerticalStep({
   active,
@@ -17,6 +25,7 @@ export function VerticalStep({
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const refTop = useRef<HTMLLIElement | null>(null);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
   const { height } = useElemSize(ref);
 
   const isSelected = active === index;
@@ -30,6 +39,20 @@ export function VerticalStep({
         refTop.current.scrollIntoView({ behavior: 'smooth' });
       }, 500);
   }, [isSelected]);
+
+  useLayoutEffect(() => {
+    setShouldAnimate(true);
+  }, [active]);
+
+  // Make it so it wont try to animate the size
+  // if we are not changing active step
+  useDebouncedEffect(
+    () => {
+      setShouldAnimate(false);
+    },
+    [active],
+    1000
+  );
 
   return (
     <li className="mb-10 scroll-m-4" ref={refTop}>
@@ -52,7 +75,9 @@ export function VerticalStep({
         <Typography variant="section-title">{title}</Typography>
         <div
           style={{ height: !isSelected ? 0 : height }}
-          className="overflow-clip duration-500 transition-[height]"
+          className={classNames('overflow-clip', {
+            'duration-500 transition-[height]': shouldAnimate,
+          })}
         >
           <div ref={ref}>{children}</div>
         </div>
@@ -64,6 +89,7 @@ export function VerticalStep({
 type VerticalStepComponentType = FC<{
   nextStep: () => void;
   prevStep: () => void;
+  isActive: boolean;
 }>;
 
 export type VerticalStep = {
@@ -88,7 +114,11 @@ export default function VerticalStepper({ steps }: { steps: VerticalStep[] }) {
     <ol className="relative border-l  border-gray-700 text-gray-400 ">
       {steps.map(({ title, component: StepComponent }, index) => (
         <VerticalStep active={currStep} index={index} title={title} key={index}>
-          <StepComponent nextStep={nextStep} prevStep={prevStep}></StepComponent>
+          <StepComponent
+            nextStep={nextStep}
+            prevStep={prevStep}
+            isActive={currStep === index}
+          ></StepComponent>
         </VerticalStep>
       ))}
     </ol>

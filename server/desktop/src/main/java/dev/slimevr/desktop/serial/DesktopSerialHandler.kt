@@ -175,6 +175,11 @@ class DesktopSerialHandler : SerialHandler(), SerialPortMessageListener {
 		}
 	}
 
+	override fun write(buff: ByteArray) {
+		println("WRITING $buff")
+		currentPort?.outputStream?.write(buff)
+	}
+
 	@Synchronized
 	override fun setWifi(ssid: String, passwd: String) {
 		val os = currentPort?.outputStream ?: return

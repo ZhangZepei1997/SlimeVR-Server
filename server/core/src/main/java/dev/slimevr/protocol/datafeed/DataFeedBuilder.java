@@ -345,7 +345,7 @@ public class DataFeedBuilder {
 		for (int i = 0; i < devices.size(); i++) {
 			Device device = devices.get(i);
 			devicesDataOffsets[i] = DataFeedBuilder
-				.createDeviceData(fbb, i, deviceDataMaskT, device);
+				.createDeviceData(fbb, device.getId(), deviceDataMaskT, device);
 		}
 
 		return DataFeedUpdate.createDevicesVector(fbb, devicesDataOffsets);
