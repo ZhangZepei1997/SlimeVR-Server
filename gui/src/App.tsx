@@ -35,10 +35,9 @@ import { SerialDetectionModal } from './components/SerialDetectionModal';
 import { VRCOSCSettings } from './components/settings/pages/VRCOSCSettings';
 import { TopBar } from './components/TopBar';
 import { TrackerSettingsPage } from './components/tracker/TrackerSettings';
-import { useConfig } from './hooks/config';
 import { OSCRouterSettings } from './components/settings/pages/OSCRouterSettings';
 import { useLocalization } from '@fluent/react';
-import { os } from '@tauri-apps/api';
+import * as os from '@tauri-apps/plugin-os';
 import { VMCSettings } from './components/settings/pages/VMCSettings';
 import { MountingChoose } from './components/onboarding/pages/mounting/MountingChoose';
 import { ProportionsChoose } from './components/onboarding/pages/body-proportions/ProportionsChoose';
@@ -46,13 +45,14 @@ import { StatusProvider } from './components/providers/StatusSystemContext';
 import { VersionUpdateModal } from './components/VersionUpdateModal';
 import { CalibrationTutorialPage } from './components/onboarding/pages/CalibrationTutorial';
 import { AssignmentTutorialPage } from './components/onboarding/pages/assignment-preparation/AssignmentTutorial';
-import { open } from '@tauri-apps/api/shell';
+import { open } from '@tauri-apps/plugin-shell';
 import semver from 'semver';
 import { useBreakpoint } from './hooks/breakpoint';
 import { VRModePage } from './components/vr-mode/VRModePage';
 import { InterfaceSettings } from './components/settings/pages/InterfaceSettings';
 import { error, log } from './utils/logging';
 import { FirmwareToolSettings } from './components/firmware-tool/FirmwareTool';
+import { AppLayout } from './AppLayout';
 
 export const GH_REPO = 'SlimeVR/SlimeVR-Server';
 export const VersionContext = createContext('');
@@ -60,100 +60,102 @@ export const DOCS_SITE = 'https://docs.slimevr.dev';
 export const SLIMEVR_DISCORD = 'https://discord.gg/slimevr';
 
 function Layout() {
-  const { loading } = useConfig();
-
-  if (loading) return <></>;
-
   const { isMobile } = useBreakpoint('mobile');
+
   return (
     <>
       <SerialDetectionModal></SerialDetectionModal>
       <VersionUpdateModal></VersionUpdateModal>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <MainLayoutRoute isMobile={isMobile}>
-              <Home />
-            </MainLayoutRoute>
-          }
-        />
-        <Route
-          path="/vr-mode"
-          element={
-            <MainLayoutRoute isMobile={isMobile}>
-              <VRModePage />
-            </MainLayoutRoute>
-          }
-        />
-        <Route
-          path="/tracker/:trackernum/:deviceid"
-          element={
-            <MainLayoutRoute background={false} isMobile={isMobile}>
-              <TrackerSettingsPage />
-            </MainLayoutRoute>
-          }
-        />
-        <Route
-          path="/firmware-tool"
-          element={
-            <MainLayoutRoute isMobile={isMobile} widgets={false}>
-              <FirmwareToolSettings />
-            </MainLayoutRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <SettingsLayoutRoute>
-              <Outlet></Outlet>
-            </SettingsLayoutRoute>
-          }
-        >
-          <Route path="trackers" element={<GeneralSettings />} />
-          <Route path="serial" element={<Serial />} />
-          <Route path="osc/router" element={<OSCRouterSettings />} />
-          <Route path="osc/vrchat" element={<VRCOSCSettings />} />
-          <Route path="osc/vmc" element={<VMCSettings />} />
-          <Route path="interface" element={<InterfaceSettings />} />
+        <Route element={<AppLayout />}>
+          <Route
+            path="/"
+            element={
+              <MainLayoutRoute isMobile={isMobile}>
+                <Home />
+              </MainLayoutRoute>
+            }
+          />
+          <Route
+            path="/firmware-tool"
+            element={
+              <MainLayoutRoute isMobile={isMobile} widgets={false}>
+                <FirmwareToolSettings />
+              </MainLayoutRoute>
+            }
+          />
+          <Route
+            path="/vr-mode"
+            element={
+              <MainLayoutRoute isMobile={isMobile}>
+                <VRModePage />
+              </MainLayoutRoute>
+            }
+          />
+          <Route
+            path="/tracker/:trackernum/:deviceid"
+            element={
+              <MainLayoutRoute background={false} isMobile={isMobile}>
+                <TrackerSettingsPage />
+              </MainLayoutRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <SettingsLayoutRoute>
+                <Outlet />
+              </SettingsLayoutRoute>
+            }
+          >
+            <Route path="trackers" element={<GeneralSettings />} />
+            <Route path="serial" element={<Serial />} />
+            <Route path="osc/router" element={<OSCRouterSettings />} />
+            <Route path="osc/vrchat" element={<VRCOSCSettings />} />
+            <Route path="osc/vmc" element={<VMCSettings />} />
+            <Route path="interface" element={<InterfaceSettings />} />
+          </Route>
+          <Route
+            path="/onboarding"
+            element={
+              <OnboardingLayout>
+                <Outlet />
+              </OnboardingLayout>
+            }
+          >
+            <Route path="home" element={<HomePage />} />
+            <Route path="wifi-creds" element={<WifiCredsPage />} />
+            <Route path="connect-trackers" element={<ConnectTrackersPage />} />
+            <Route
+              path="calibration-tutorial"
+              element={<CalibrationTutorialPage />}
+            />
+            <Route
+              path="assign-tutorial"
+              element={<AssignmentTutorialPage />}
+            />
+            <Route path="trackers-assign" element={<TrackersAssignPage />} />
+            <Route path="enter-vr" element={<EnterVRPage />} />
+            <Route path="mounting/choose" element={<MountingChoose />}></Route>
+            <Route path="mounting/auto" element={<AutomaticMountingPage />} />
+            <Route path="mounting/manual" element={<ManualMountingPage />} />
+            <Route path="reset-tutorial" element={<ResetTutorialPage />} />
+            <Route
+              path="body-proportions/choose"
+              element={<ProportionsChoose />}
+            />
+            <Route
+              path="body-proportions/auto"
+              element={<AutomaticProportionsPage />}
+            />
+            <Route
+              path="body-proportions/manual"
+              element={<ManualProportionsPage />}
+            />
+            <Route path="done" element={<DonePage />} />
+          </Route>
+          <Route path="*" element={<TopBar></TopBar>}></Route>
         </Route>
-        <Route
-          path="/onboarding"
-          element={
-            <OnboardingLayout>
-              <Outlet></Outlet>
-            </OnboardingLayout>
-          }
-        >
-          <Route path="home" element={<HomePage />} />
-          <Route path="wifi-creds" element={<WifiCredsPage />} />
-          <Route path="connect-trackers" element={<ConnectTrackersPage />} />
-          <Route
-            path="calibration-tutorial"
-            element={<CalibrationTutorialPage />}
-          />
-          <Route path="assign-tutorial" element={<AssignmentTutorialPage />} />
-          <Route path="trackers-assign" element={<TrackersAssignPage />} />
-          <Route path="enter-vr" element={<EnterVRPage />} />
-          <Route path="mounting/choose" element={<MountingChoose />}></Route>
-          <Route path="mounting/auto" element={<AutomaticMountingPage />} />
-          <Route path="mounting/manual" element={<ManualMountingPage />} />
-          <Route path="reset-tutorial" element={<ResetTutorialPage />} />
-          <Route
-            path="body-proportions/choose"
-            element={<ProportionsChoose />}
-          />
-          <Route
-            path="body-proportions/auto"
-            element={<AutomaticProportionsPage />}
-          />
-          <Route
-            path="body-proportions/manual"
-            element={<ManualProportionsPage />}
-          />
-          <Route path="done" element={<DonePage />} />
-        </Route>
-        <Route path="*" element={<TopBar></TopBar>}></Route>
       </Routes>
     </>
   );

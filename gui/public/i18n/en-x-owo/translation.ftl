@@ -36,6 +36,7 @@ body_part-RIGHT_HAND = wight pawb
 body_part-RIGHT_UPPER_LEG = wight uppew weg
 body_part-RIGHT_LOWER_LEG = wight wowwe weg
 body_part-RIGHT_FOOT = wight pawb
+body_part-UPPER_CHEST = uppew chest
 body_part-CHEST = chwest~
 body_part-WAIST = wyayst~
 body_part-HIP = hyip
@@ -53,8 +54,9 @@ skeleton_bone-NONE = none
 skeleton_bone-HEAD = hed shyft
 skeleton_bone-NECK = nyeck wength
 skeleton_bone-torso_group = towso wength
-skeleton_bone-CHEST = chwest wength
+skeleton_bone-UPPER_CHEST = uppew chest wength
 skeleton_bone-CHEST_OFFSET = chwest awfset
+skeleton_bone-CHEST = chwest wength
 skeleton_bone-WAIST = weyst wength
 skeleton_bone-HIP = hip wength
 skeleton_bone-HIP_OFFSET = hyip awfset
@@ -120,6 +122,10 @@ widget-overlay-is_mirrored_label = dispway owovelay as miwwow
 
 widget-drift_compensation-clear = cwear dwift compensation
 
+## Widget: Clear Reset Mounting
+
+widget-clear_mounting = cweaw weset meownting
+
 ## Widget: Developer settings
 
 widget-developer_mode = devwowwewow mode
@@ -163,9 +169,15 @@ tracker-table-column-url = uawl
 ## Tracker rotation
 
 tracker-rotation-front = fwowt
+tracker-rotation-front_left = fwont-weft
+tracker-rotation-front_right = fwont-wight
 tracker-rotation-left = lewft
 tracker-rotation-right = wight
 tracker-rotation-back = bak
+tracker-rotation-back_left = back-weft
+tracker-rotation-back_right = back-wight
+tracker-rotation-custom = custowm
+tracker-rotation-overriden = (ovewwidden by meownting weset)
 
 ## Tracker information
 
@@ -230,6 +242,7 @@ tracker_selection_menu-RIGHT_UPPER_LEG = { -tracker_selection-part } wight tigh?
 tracker_selection_menu-RIGHT_LOWER_LEG = { -tracker_selection-part } wight ankew?
 tracker_selection_menu-RIGHT_FOOT = { -tracker_selection-part } wight pawb?
 tracker_selection_menu-RIGHT_CONTROLLER = { -tracker_selection-part } wight contwowwaw?
+tracker_selection_menu-UPPER_CHEST = { -tracker_selection-part } uppew chest?
 tracker_selection_menu-CHEST = { -tracker_selection-part } chwest?
 tracker_selection_menu-WAIST = { -tracker_selection-part } waste?
 tracker_selection_menu-HIP = { -tracker_selection-part } hiyp?
@@ -269,6 +282,8 @@ settings-sidebar-osc_router = OSC wouwter
 settings-sidebar-osc_trackers = VRChawt OSC Twayckaws
 settings-sidebar-utils = utiwities
 settings-sidebar-serial = sewiaw cownsaw
+settings-sidebar-appearance = appeawance
+settings-sidebar-notifications = notificashuns
 
 ## SteamVR settings
 
@@ -336,11 +351,21 @@ settings-general-fk_settings-leg_fk = leg twacking
 settings-general-fk_settings-arm_fk = awm twacking
 settings-general-fk_settings-arm_fk-description = chawnge teh way teh awms awe twacked.
 settings-general-fk_settings-arm_fk-force_arms = fowce awms fwom hmd
-settings-general-fk_settings-skeleton_settings = skeweton sewttings
+settings-general-fk_settings-skeleton_settings-toggles = skeweton toggews
 settings-general-fk_settings-skeleton_settings-description = toggwe skeweton sewttings on owow off. is wowcommended to weawve these on~
-settings-general-fk_settings-skeleton_settings-extended_spine = ewtended spine
-settings-general-fk_settings-skeleton_settings-extended_pelvis = ewtended pelvis
-settings-general-fk_settings-skeleton_settings-extended_knees = ewtended neey
+settings-general-fk_settings-skeleton_settings-extended_spine_model = extwended spine modew
+settings-general-fk_settings-skeleton_settings-extended_pelvis_model = extwended pewvis modew
+settings-general-fk_settings-skeleton_settings-extended_knees_model = extwended nee modew
+settings-general-fk_settings-skeleton_settings-ratios = skeweton watios
+settings-general-fk_settings-skeleton_settings-ratios-description = change da vawue of skeweton settings. u may need to ajust ur pawpowshuns aftew changin dese.
+settings-general-fk_settings-skeleton_settings-impute_waist_from_chest_hip = impute waist fwom chest to hip
+settings-general-fk_settings-skeleton_settings-impute_waist_from_chest_legs = impute waist fwom chest to wegs
+settings-general-fk_settings-skeleton_settings-impute_hip_from_chest_legs = impute hip fwom chest to wegs
+settings-general-fk_settings-skeleton_settings-impute_hip_from_waist_legs = impute hip fwom waist to wegs
+settings-general-fk_settings-skeleton_settings-interp_hip_legs = awewage da hip's yaw and woll wiff da legs'
+settings-general-fk_settings-skeleton_settings-interp_knee_tracker_ankle = awewage da knee twackews' yaw and woll wiff da ankews'
+settings-general-fk_settings-self_localization-title = mocap mowd
+settings-general-fk_settings-self_localization-description = mocap mowd awwows da skeweton to wuffly twack is own posishun without a hedset or other twackews. note dat dis wequiwes feet and hed twackews to wowk and is stiwll expewimentaw.
 settings-general-fk_settings-vive_emulation-title = vive emuwation
 settings-general-fk_settings-vive_emulation-description = emuwate the waist twackew pwobwems that vive twackews hawe. tis is a jowke and mawkes twacking wowse eheh ^^
 settings-general-fk_settings-vive_emulation-label = enabwe vive emuwation
@@ -357,6 +382,13 @@ settings-general-gesture_control-taps =
         [one] 1 bap
        *[other] { $amount } baps
     }
+# This is a unit: 3 trackers, 2 trackers, 1 tracker
+# $amount (Number) - Amount of trackers
+settings-general-gesture_control-trackers =
+    { $amount ->
+        [one] 1 twackew
+       *[other] { $amount } twackews
+    }
 settings-general-gesture_control-yawResetEnabled = enabwe bap to yaw weset
 settings-general-gesture_control-yawResetDelay = yaw weset deway
 settings-general-gesture_control-yawResetTaps = baps fow yaw weset
@@ -366,13 +398,32 @@ settings-general-gesture_control-fullResetTaps = baps fow fuww weset
 settings-general-gesture_control-mountingResetEnabled = enable wap to weset mountwing
 settings-general-gesture_control-mountingResetDelay = mountwing weset deway
 settings-general-gesture_control-mountingResetTaps = baps for mountwing weset
+# The number of trackers that can have higher acceleration before a tap is rejected
+settings-general-gesture_control-numberTrackersOverThreshold = twackews over thweshowd
+settings-general-gesture_control-numberTrackersOverThreshold-description = incwease dis vawue if da bap detecshun is nawt wowking. dont incwease it above what is need to make bap detecshun wowk as it wowd cauwse mowe fawse pawsitives.
 
-## Interface settings
+## Appearance settings
 
-settings-general-interface = intewface
+settings-interface-appearance = appeawance
 settings-general-interface-dev_mode = devwowwewow mode
 settings-general-interface-dev_mode-description = this mode can be wowseffuw if you need in-dipth data owow to intewact with cownnected twackaws on a wowowe wowadvanced wowwevew
 settings-general-interface-dev_mode-label = devwowwewow mode
+settings-general-interface-theme = cowor theem
+settings-general-interface-lang = sewect wanguage
+settings-general-interface-lang-description = change the defawwt wanguage yuw want to use
+settings-general-interface-lang-placeholder = sewect teh wanguage to use
+# Keep the font name untranslated
+settings-interface-appearance-font = gui fawnt
+settings-interface-appearance-font-description = dis change da fawnt use by da intewface.
+settings-interface-appearance-font-placeholder = defawt fawnt
+settings-interface-appearance-font-os_font = os fawnt
+settings-interface-appearance-font-slime_font = defawt fawnt
+settings-interface-appearance-font_size = bass fawn scawing
+settings-interface-appearance-font_size-description = dis affects da fawnt size of da whol intewface except dis setting panew.
+
+## Notification settings
+
+settings-interface-notifications = notificashuns
 settings-general-interface-serial_detection = shewyaw device deteccion
 settings-general-interface-serial_detection-description = this option will shaww a pawp-up evewy time yuw pwug a new shewyaw device that cawwld be a twayckaw. it helps iympwooving teh setup pwocess of a twayckaw
 settings-general-interface-serial_detection-label = shewyaw device deteccion
@@ -380,10 +431,6 @@ settings-general-interface-feedback_sound = feeback sownd
 settings-general-interface-feedback_sound-description = dis awptshun wiww pway a sownd wen a weset is twiggered (meow~!)
 settings-general-interface-feedback_sound-label = feeback sownd
 settings-general-interface-feedback_sound-volume = feedback sownd volyume
-settings-general-interface-theme = cowor theem
-settings-general-interface-lang = sewect wanguage
-settings-general-interface-lang-description = change the defawwt wanguage yuw want to use
-settings-general-interface-lang-placeholder = sewect teh wanguage to use
 
 ## Serial settings
 
@@ -527,7 +574,7 @@ onboarding-wifi_creds-password =
 
 onboarding-reset_tutorial-back = gaww bawwk to meownting cawwibwation
 onboarding-reset_tutorial = weset wtutowial
-onboarding-reset_tutorial-description = dis featuwe isn't done, just pwess continyue
+onboarding-reset_tutorial-explanation = whiwe you use youw twackews dey mite get out of awignment becus of imu yaw dwift, or because u might have moved dem physicawwy. you have sevewew way to fix dis.
 onboarding-reset_tutorial-skip = skip sedup
 # Cares about multiline
 onboarding-reset_tutorial-0 =
@@ -612,8 +659,8 @@ onboarding-assignment_tutorial = how to pwepawe a Swime Twackew befowe puting it
 onboarding-assignment_tutorial-first_step = 1. pwace a body pawt stickew (if you has wun) on da twackew accowding to u choosing :3
 # This text has a character limit of around 11 characters, so please keep it short
 onboarding-assignment_tutorial-sticker = sticker
-onboarding-assignment_tutorial-second_step = 2. put da stwap to u twackew, keep da hook an woop side of the stwap face in the fowlowing owientation:
-onboarding-assignment_tutorial-second_step-continuation = da hook an woop side fow da extenson shouwd be in this owientation:
+onboarding-assignment_tutorial-second_step-v2 = 2. attach da stwap to youw twackew, keeping da vewcwo side of da stwap facing da same diwecshun as da swime face of youw twackew:
+onboarding-assignment_tutorial-second_step-continuation-v2 = da vewcwo side fow da extenshun shud be facing up wike da fowwowing image:
 onboarding-assignment_tutorial-done = i put da stickew an stwap on :3
 
 ## Tracker assignment setup
@@ -707,11 +754,11 @@ onboarding-choose_mounting = wut meownting cawibwation mefod to use?
 onboarding-choose_mounting-description = meownting owientation correct fow da pwacement of twackews on u body.
 onboarding-choose_mounting-auto_mounting = awtomawic meownting
 # Italized text
-onboarding-choose_mounting-auto_mounting-subtitle = wecommended
+onboarding-choose_mounting-auto_mounting-label = expewimentaw
 onboarding-choose_mounting-auto_mounting-description = dis will automaticawwy detec da meownting diwecshuns fow aww of ya twackews fwom 2 poses
 onboarding-choose_mounting-manual_mounting = manyul meownting
 # Italized text
-onboarding-choose_mounting-manual_mounting-subtitle = if yu know wut u r doin
+onboarding-choose_mounting-manual_mounting-label = wecommended
 onboarding-choose_mounting-manual_mounting-description = dis will let u chose da meownting diwecshun manuwawwy fow eech twackew
 
 ## Tracker manual mounting setup
@@ -753,12 +800,15 @@ onboarding-choose_proportions-description =
 onboarding-choose_proportions-auto_proportions = awtomatic pwopowtions
 # Italized text
 onboarding-choose_proportions-auto_proportions-subtitle = wecommended
-onboarding-choose_proportions-auto_proportions-description = dis will guess ur pwopowshuns by wecowding a sampwe of ur movement and pass it thwough an ai
+onboarding-choose_proportions-auto_proportions-descriptionv2 =
+    dis wiww guess youw pwopowshuns by wecowding a sampwe of youw movement and passing it thru an algowithm.
+    
+    <b>dis wequiwes having youw hmd connected to SwimeVR!</b>
 onboarding-choose_proportions-manual_proportions = manuwal pwopowtions
 # Italized text
 onboarding-choose_proportions-manual_proportions-subtitle = fow smol touchies
 onboarding-choose_proportions-manual_proportions-description = dis will let u ajust ur pwopowtions manuwally by modifying dem diwectwy
-onboarding-choose_proportions-save = sav pawpwotions
+onboarding-choose_proportions-export = expowt pawpowshuns
 onboarding-choose_proportions-file_type = body pawpowshuns file
 
 ## Tracker manual proportions setup
@@ -789,6 +839,18 @@ onboarding-automatic_proportions-requirements-description =
     ur twackews and headset awe wowking pwopewwy within the SwimeVR sewvew.
     ur headset is wepowting positionyaw data to the SwimeVR sewvew (this genyewawwy wenyewawwy means having SteamVR wunnying and connyected to SwimeVR using SwimeVR's SteamVR dwivew).
 onboarding-automatic_proportions-requirements-next = i have wed da wequiwemens
+onboarding-automatic_proportions-check_height-title = check youw height
+onboarding-automatic_proportions-check_height-description = we use youw height as a basis of ouw measuwements by using da hmd's height as an appwoximashun of youw actuwaw height, but is better to check if they are right youwsewf!
+# All the text is in bold!
+onboarding-automatic_proportions-check_height-calculation_warning = pwease pwess da button while standing <u>upwight</u> to cawcuwate youw height. you hav 3 second aftew you pwess da button! >w<
+onboarding-automatic_proportions-check_height-fetch_height = am standing!
+# Context is that the height is unknown
+onboarding-automatic_proportions-check_height-unknown = unnown
+# Shows an element below it
+onboarding-automatic_proportions-check_height-hmd_height1 = youw hmd heit is
+# Shows an element below it
+onboarding-automatic_proportions-check_height-height1 = so youw actuaw heit is
+onboarding-automatic_proportions-check_height-next_step = dey awe fine
 onboarding-automatic_proportions-start_recording-title = get wowdy to move
 onboarding-automatic_proportions-start_recording-description = we'we now going to wowcawd some specific poses and moves. these will be pwompted in teh wowst screen. be wowdy to stawt when teh buttawn is pwessed!
 onboarding-automatic_proportions-start_recording-next = stawt wowcawding
@@ -818,6 +880,10 @@ onboarding-automatic_proportions-verify_results-redo = wedo wecowding
 onboarding-automatic_proportions-verify_results-confirm = tehywee coowect
 onboarding-automatic_proportions-done-title = bawdy meowsured anwd sayved uwu
 onboarding-automatic_proportions-done-description = yoww body pwopowwtions cawybowwation is cowowplete! ^w^
+onboarding-automatic_proportions-error_modal =
+    <b>wawning:</b> an ewwow was fownd whiwe estimating pawpowshuns! ;w;
+    pwease <docs>check da docs</docs> or join ouw <discord>Discord</discord> fow hewp >~>
+onboarding-automatic_proportions-error_modal-confirm = undewstood!
 
 ## Home
 

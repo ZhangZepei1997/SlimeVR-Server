@@ -4,11 +4,9 @@ import {
   Reducer,
   useContext,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useReducer,
 } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   BoneT,
   DataFeedMessage,
@@ -20,11 +18,11 @@ import {
   StartDataFeedT,
   TrackerDataT,
 } from 'solarxr-protocol';
-import { playSoundOnResetStarted } from '../sounds/sounds';
+import { playSoundOnResetStarted } from '@/sounds/sounds';
 import { useConfig } from './config';
 import { useDataFeedConfig } from './datafeed-config';
 import { useWebsocketAPI } from './websocket-api';
-import { error } from '../utils/logging';
+import { error } from '@/utils/logging';
 
 export interface FlatDeviceTracker {
   device?: DeviceDataT;
@@ -59,7 +57,6 @@ export function useProvideAppContext(): AppContext {
     useWebsocketAPI();
   const { config } = useConfig();
   const { dataFeedConfig } = useDataFeedConfig();
-  const navigate = useNavigate();
   const [state, dispatch] = useReducer<Reducer<AppState, AppStateAction>>(reducer, {
     datafeed: new DataFeedUpdateT(),
   });
@@ -71,12 +68,6 @@ export function useProvideAppContext(): AppContext {
       sendDataFeedPacket(DataFeedMessage.StartDataFeed, startDataFeed);
     }
   }, [isConnected]);
-
-  useLayoutEffect(() => {
-    if (config && !config.doneOnboarding) {
-      navigate('/onboarding/home');
-    }
-  }, [config]);
 
   const trackers = useMemo(
     () =>

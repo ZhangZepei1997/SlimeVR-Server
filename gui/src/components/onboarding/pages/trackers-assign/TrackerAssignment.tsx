@@ -14,21 +14,24 @@ import {
   ChangeSettingsRequestT,
   TapDetectionSetupNotificationT,
 } from 'solarxr-protocol';
-import { FlatDeviceTracker } from '../../../../hooks/app';
-import { useChokerWarning } from '../../../../hooks/choker-warning';
-import { useOnboarding } from '../../../../hooks/onboarding';
-import { useTrackers } from '../../../../hooks/tracker';
-import { useWebsocketAPI } from '../../../../hooks/websocket-api';
-import { Button } from '../../../commons/Button';
-import { CheckBox } from '../../../commons/Checkbox';
-import { TipBox } from '../../../commons/TipBox';
-import { Typography } from '../../../commons/Typography';
-import { ASSIGNMENT_RULES, BodyAssignment } from '../../BodyAssignment';
-import { NeckWarningModal } from '../../NeckWarningModal';
+import { FlatDeviceTracker } from '@/hooks/app';
+import { useChokerWarning } from '@/hooks/choker-warning';
+import { useOnboarding } from '@/hooks/onboarding';
+import { useTrackers } from '@/hooks/tracker';
+import { useWebsocketAPI } from '@/hooks/websocket-api';
+import { Button } from '@/components/commons/Button';
+import { CheckBox } from '@/components/commons/Checkbox';
+import { TipBox } from '@/components/commons/TipBox';
+import { Typography } from '@/components/commons/Typography';
+import {
+  ASSIGNMENT_RULES,
+  BodyAssignment,
+} from '@/components/onboarding/BodyAssignment';
+import { NeckWarningModal } from '@/components/onboarding/NeckWarningModal';
 import { TrackerSelectionMenu } from './TrackerSelectionMenu';
-import { useConfig } from '../../../../hooks/config';
-import { playTapSetupSound } from '../../../../sounds/sounds';
-import { useBreakpoint } from '../../../../hooks/breakpoint';
+import { useConfig } from '@/hooks/config';
+import { playTapSetupSound } from '@/sounds/sounds';
+import { useBreakpoint } from '@/hooks/breakpoint';
 
 export type BodyPartError = {
   label: string | undefined;
@@ -45,18 +48,21 @@ interface FlatDeviceTrackerDummy {
 export function TrackersAssignPage() {
   const { isMobile } = useBreakpoint('mobile');
   const { l10n } = useLocalization();
+  const { config, setConfig } = useConfig();
   const { useAssignedTrackers, trackers } = useTrackers();
   const { applyProgress, state } = useOnboarding();
   const { sendRPCPacket, useRPCPacket } = useWebsocketAPI();
 
   const { control, watch } = useForm<{ advanced: boolean }>({
-    defaultValues: { advanced: false },
+    defaultValues: { advanced: config?.advancedAssign ?? false },
   });
   const { advanced } = watch();
   const [selectedRole, setSelectRole] = useState<BodyPart>(BodyPart.NONE);
   const assignedTrackers = useAssignedTrackers();
+  useEffect(() => {
+    setConfig({ advancedAssign: advanced });
+  }, [advanced]);
 
-  const { config } = useConfig();
   const [tapDetectionSettings, setTapDetectionSettings] = useState<Omit<
     TapDetectionSettingsT,
     'pack'

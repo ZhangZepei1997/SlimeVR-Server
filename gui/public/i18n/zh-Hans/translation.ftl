@@ -19,7 +19,7 @@ version_update-close = 关闭
 
 ## Tips
 
-tips-find_tracker = 不确定哪个追踪器是哪个？在现实中摇动一个追踪器，对应的那个将在屏幕上高亮显示。
+tips-find_tracker = 分不清哪个追踪器是哪个了？摇一摇它，对应的那个将被高亮显示。
 tips-do_not_move_heels = 确保你的脚跟在录制的时候不会发生移动!
 tips-file_select = 拖放文档或 <u>浏览文档</u> 以使用
 tips-tap_setup = 你可以缓慢地敲击2次追踪器来选中它，而不是从菜单中选取。
@@ -36,6 +36,7 @@ body_part-RIGHT_HAND = 右手
 body_part-RIGHT_UPPER_LEG = 右大腿
 body_part-RIGHT_LOWER_LEG = 右小腿
 body_part-RIGHT_FOOT = 右脚
+body_part-UPPER_CHEST = 上胸
 body_part-CHEST = 胸部
 body_part-WAIST = 腰部
 body_part-HIP = 髋部
@@ -53,6 +54,7 @@ skeleton_bone-NONE = 无
 skeleton_bone-HEAD = 头部偏移
 skeleton_bone-NECK = 颈部长度
 skeleton_bone-torso_group = 躯干长度
+skeleton_bone-UPPER_CHEST = 上胸长度
 skeleton_bone-CHEST_OFFSET = 胸部偏移
 skeleton_bone-CHEST = 胸部长度
 skeleton_bone-WAIST = 腰部长度
@@ -64,7 +66,7 @@ skeleton_bone-UPPER_LEG = 大腿长度
 skeleton_bone-LOWER_LEG = 小腿长度
 skeleton_bone-FOOT_LENGTH = 脚部长度
 skeleton_bone-FOOT_SHIFT = 脚部偏移
-skeleton_bone-SKELETON_OFFSET = 骨骼偏移
+skeleton_bone-SKELETON_OFFSET = 骨架偏移
 skeleton_bone-SHOULDERS_DISTANCE = 肩膀距离
 skeleton_bone-SHOULDERS_WIDTH = 肩膀宽度
 skeleton_bone-arm_group = 手臂长度
@@ -120,6 +122,10 @@ widget-overlay-is_mirrored_label = 镜像显示覆盖层
 
 widget-drift_compensation-clear = 清除漂移补偿数据
 
+## Widget: Clear Reset Mounting
+
+widget-clear_mounting = 清除重置佩戴
+
 ## Widget: Developer settings
 
 widget-developer_mode = 开发者选项
@@ -163,9 +169,15 @@ tracker-table-column-url = 地址
 ## Tracker rotation
 
 tracker-rotation-front = 前
+tracker-rotation-front_left = 左前
+tracker-rotation-front_right = 右前
 tracker-rotation-left = 左
 tracker-rotation-right = 右
 tracker-rotation-back = 后
+tracker-rotation-back_left = 左后
+tracker-rotation-back_right = 右后
+tracker-rotation-custom = 自定义
+tracker-rotation-overriden = （被重置佩戴覆盖）
 
 ## Tracker information
 
@@ -230,6 +242,7 @@ tracker_selection_menu-RIGHT_UPPER_LEG = { -tracker_selection-part }右大腿？
 tracker_selection_menu-RIGHT_LOWER_LEG = { -tracker_selection-part }右小腿？
 tracker_selection_menu-RIGHT_FOOT = { -tracker_selection-part }右脚？
 tracker_selection_menu-RIGHT_CONTROLLER = { -tracker_selection-part }右控制器？
+tracker_selection_menu-UPPER_CHEST = { -tracker_selection-part }上胸？
 tracker_selection_menu-CHEST = { -tracker_selection-part }胸部？
 tracker_selection_menu-WAIST = { -tracker_selection-part }腰部？
 tracker_selection_menu-HIP = { -tracker_selection-part }髋部？
@@ -269,6 +282,8 @@ settings-sidebar-osc_router = OSC 路由
 settings-sidebar-osc_trackers = VRChat OSC 追踪器
 settings-sidebar-utils = 工具
 settings-sidebar-serial = 串口控制台
+settings-sidebar-appearance = 外观
+settings-sidebar-notifications = 通知
 
 ## SteamVR settings
 
@@ -279,8 +294,8 @@ settings-general-steamvr-subtitle = SteamVR 追踪器
 # The first spaces (not tabs) for indentation will be ignored, just to make the file look nice when writing.
 # This one is one of this cases that cares about multilines
 settings-general-steamvr-description =
-    启用或禁用特定的追踪器
-    对于只支持特定追踪器的应用会很有用。
+    启用或禁用特定的 SteamVR 追踪器
+    对于只支持特定追踪器的游戏或应用会很有用。
 settings-general-steamvr-trackers-waist = 腰部
 settings-general-steamvr-trackers-chest = 胸部
 settings-general-steamvr-trackers-feet = 脚部
@@ -333,14 +348,36 @@ settings-general-fk_settings-leg_tweak-floor_clip-description = 地板限制可�
 settings-general-fk_settings-leg_tweak-toe_snap-description = 脚趾着地可以在没有脚部追踪器的情况下尝试猜测脚部的俯仰。
 settings-general-fk_settings-leg_tweak-foot_plant-description = 脚掌着地会在脚与地面接触时保持脚掌与地板平行。
 settings-general-fk_settings-leg_fk = 腿部追踪
+settings-general-fk_settings-leg_fk-reset_mounting_feet-description = 开启脚部佩戴重置。（佩戴重置时需要踮起脚尖）
+settings-general-fk_settings-leg_fk-reset_mounting_feet = 脚部佩戴重置
 settings-general-fk_settings-arm_fk = 手臂追踪
 settings-general-fk_settings-arm_fk-description = 即使有手臂位置数据可用，也强制使用头显的数据追踪手臂。
 settings-general-fk_settings-arm_fk-force_arms = 强制使用头显数据追踪手臂
-settings-general-fk_settings-skeleton_settings = 骨架设置
+settings-general-fk_settings-arm_fk-reset_mode-description = 更改佩戴重置时使用的手臂姿势。
+settings-general-fk_settings-arm_fk-back = 向后弯折
+settings-general-fk_settings-arm_fk-back-description = 默认，重置时大臂向后，小臂向前，类似滑雪。
+settings-general-fk_settings-arm_fk-tpose_up = T-pose（抬起）
+settings-general-fk_settings-arm_fk-tpose_up-description = 完整重置时手臂垂下，呈立正姿势；佩戴重置时手臂向两侧伸平。
+settings-general-fk_settings-arm_fk-tpose_down = T-pose（放下）
+settings-general-fk_settings-arm_fk-tpose_down-description = 完整重置时手臂向两侧伸平；佩戴重置时手臂垂下，呈立正姿势。
+settings-general-fk_settings-arm_fk-forward = 向前伸平
+settings-general-fk_settings-arm_fk-forward-description = 重置时手臂向前伸平，有利于坐姿进行虚拟直播。
+settings-general-fk_settings-skeleton_settings-toggles = 骨架设置
 settings-general-fk_settings-skeleton_settings-description = 打开或关闭骨架设置。建议保持这些设置不变。
-settings-general-fk_settings-skeleton_settings-extended_spine = 脊柱延伸
-settings-general-fk_settings-skeleton_settings-extended_pelvis = 骨盆延伸
-settings-general-fk_settings-skeleton_settings-extended_knees = 膝盖延伸
+settings-general-fk_settings-skeleton_settings-extended_spine_model = 延伸脊柱模型
+settings-general-fk_settings-skeleton_settings-extended_pelvis_model = 延伸骨盆模型
+settings-general-fk_settings-skeleton_settings-extended_knees_model = 伸展膝盖模型
+settings-general-fk_settings-skeleton_settings-ratios = 骨架比例
+settings-general-fk_settings-skeleton_settings-ratios-description = 更改骨架设置的参数。您可能需要在更改后调整身体比例。
+settings-general-fk_settings-skeleton_settings-impute_waist_from_chest_hip = 用胸部到髋部的数据推算腰部
+settings-general-fk_settings-skeleton_settings-impute_waist_from_chest_legs = 用胸部到腿部的数据推算腰部
+settings-general-fk_settings-skeleton_settings-impute_hip_from_chest_legs = 用胸部到腿部的数据推算髋部
+settings-general-fk_settings-skeleton_settings-impute_hip_from_waist_legs = 用腰部到腿部的数据推算髋部
+settings-general-fk_settings-skeleton_settings-interp_hip_legs = 平均髋部与腿部间航向轴和横滚轴的数值
+settings-general-fk_settings-skeleton_settings-interp_knee_tracker_ankle = 平均膝盖追踪器与小腿间航向轴和横滚轴的数值
+settings-general-fk_settings-skeleton_settings-interp_knee_ankle = 平均膝盖与小腿间航向轴和横滚轴的数值
+settings-general-fk_settings-self_localization-title = 动作捕捉模式
+settings-general-fk_settings-self_localization-description = 动作捕捉模式允许在没有头戴设备或其他追踪器的情况下粗略地跟踪骨架姿态。请注意，本功能需要脚部和头部追踪器，且现阶段依然是实验性的。
 settings-general-fk_settings-vive_emulation-title = Vive 模拟
 settings-general-fk_settings-vive_emulation-description = 模拟Vive追踪器的腰部丢追问题。（ 注：这是一个玩笑功能，会劣化追踪质量。）
 settings-general-fk_settings-vive_emulation-label = 开启 Vive 模拟
@@ -356,6 +393,9 @@ settings-general-gesture_control-taps =
     { $amount ->
        *[other] { $amount }次敲击
     }
+# This is a unit: 3 trackers, 2 trackers, 1 tracker
+# $amount (Number) - Amount of trackers
+settings-general-gesture_control-trackers = { $amount } 个追踪器
 settings-general-gesture_control-yawResetEnabled = 开启敲击重置航向轴
 settings-general-gesture_control-yawResetDelay = 敲击重置航向轴延迟
 settings-general-gesture_control-yawResetTaps = 重置航向轴敲击次数
@@ -365,13 +405,32 @@ settings-general-gesture_control-fullResetTaps = 完整重置敲击次数
 settings-general-gesture_control-mountingResetEnabled = 开启敲击重置佩戴
 settings-general-gesture_control-mountingResetDelay = 敲击重置佩戴延迟
 settings-general-gesture_control-mountingResetTaps = 重置佩戴敲击次数
+# The number of trackers that can have higher acceleration before a tap is rejected
+settings-general-gesture_control-numberTrackersOverThreshold = 可触发敲击重置的追踪器数量
+settings-general-gesture_control-numberTrackersOverThreshold-description = 如敲击重置不起作用请增加此值。请在保证敲击重置可用的情况下将此值设置的尽可能低，否则会导致误报。
 
-## Interface settings
+## Appearance settings
 
-settings-general-interface = 交互界面
+settings-interface-appearance = 外观
 settings-general-interface-dev_mode = 开发者模式
-settings-general-interface-dev_mode-description = 如果你需要深入的数据或更深入地与连接的追踪器进行交互，打开此模式将会非常有用。
+settings-general-interface-dev_mode-description = 如果你需要深入的资料或对连接的追踪器进行进阶调整，开启此模式将会非常有用。
 settings-general-interface-dev_mode-label = 开发者模式
+settings-general-interface-theme = 主题颜色
+settings-general-interface-lang = 选择语言
+settings-general-interface-lang-description = 更改要使用的默认语言
+settings-general-interface-lang-placeholder = 选择要使用的语言
+# Keep the font name untranslated
+settings-interface-appearance-font = 字体
+settings-interface-appearance-font-description = 修改使用的字体。
+settings-interface-appearance-font-placeholder = 默认字体
+settings-interface-appearance-font-os_font = 系统字体
+settings-interface-appearance-font-slime_font = 默认字体
+settings-interface-appearance-font_size = 字体缩放
+settings-interface-appearance-font_size-description = 这会影响除此设置面板外所有界面的字体大小。
+
+## Notification settings
+
+settings-interface-notifications = 通知
 settings-general-interface-serial_detection = 串口设备检测
 settings-general-interface-serial_detection-description = 每次插入可能是追踪器的新串口设备时，此选项都会显示一个弹出窗口。这有助于改进追踪器的设置过程。
 settings-general-interface-serial_detection-label = 串口设备检测
@@ -379,10 +438,6 @@ settings-general-interface-feedback_sound = 声音反馈
 settings-general-interface-feedback_sound-description = 开启此选项会在触发重置时发出提示音
 settings-general-interface-feedback_sound-label = 声音反馈
 settings-general-interface-feedback_sound-volume = 提示音音量
-settings-general-interface-theme = 主题颜色
-settings-general-interface-lang = 选择语言
-settings-general-interface-lang-description = 更改要使用的默认语言
-settings-general-interface-lang-placeholder = 选择要使用的语言
 
 ## Serial settings
 
@@ -411,7 +466,7 @@ settings-osc-router = OSC 路由
 # This cares about multilines
 settings-osc-router-description =
     从另一个程序转发 OSC 信息。
-    在使用另一个 VRChat 的 OSC 程序时会很有用。
+    例如需要在 VRChat 同时使用另一个 OSC 程序。
 settings-osc-router-enable = 启用
 settings-osc-router-enable-description = 控制信息转发功能的开关。
 settings-osc-router-enable-label = 启用
@@ -610,8 +665,8 @@ onboarding-assignment_tutorial = 在佩戴 Slime 追踪器之前的准备工作
 onboarding-assignment_tutorial-first_step = 1. 根据您分配的情况在追踪器上粘贴标识身体部位的贴纸（如果有）
 # This text has a character limit of around 11 characters, so please keep it short
 onboarding-assignment_tutorial-sticker = 贴纸
-onboarding-assignment_tutorial-second_step = 2. 将绑带与追踪器连接，调整绑带的粘扣朝向到如下图所示（如果有）：
-onboarding-assignment_tutorial-second_step-continuation = 扩展追踪器的粘扣朝向：
+onboarding-assignment_tutorial-second_step-v2 = 2. 将绑带穿过追踪器，确保绑带有粘扣面的朝向与追踪器上的笑脸标志同向：
+onboarding-assignment_tutorial-second_step-continuation-v2 = 扩展追踪器的粘扣朝向应如下图所示：
 onboarding-assignment_tutorial-done = 我把贴纸和绑带都弄好了！
 
 ## Tracker assignment setup
@@ -747,12 +802,18 @@ onboarding-choose_proportions-description =
 onboarding-choose_proportions-auto_proportions = 自动调整身体比例
 # Italized text
 onboarding-choose_proportions-auto_proportions-subtitle = 推荐
-onboarding-choose_proportions-auto_proportions-description = 这将录制你的运动样本并通过AI来猜测你的身体比例
+onboarding-choose_proportions-auto_proportions-descriptionv2 =
+    这将录制你的运动样本并通过算法来推测你的身体比例。
+    
+    <b>需要连接头戴设备到 SlimeVR！</b>
 onboarding-choose_proportions-manual_proportions = 手动调整身体比例
 # Italized text
 onboarding-choose_proportions-manual_proportions-subtitle = 用于精细调整
 onboarding-choose_proportions-manual_proportions-description = 这将需要你手动修改以调整你的身体比例
 onboarding-choose_proportions-export = 导出身体比例
+onboarding-choose_proportions-import = 导入身体比例
+onboarding-choose_proportions-import-success = 导入成功
+onboarding-choose_proportions-import-failed = 导入失败
 onboarding-choose_proportions-file_type = 身体比例文件
 
 ## Tracker manual proportions setup
@@ -783,6 +844,18 @@ onboarding-automatic_proportions-requirements-description =
     你的追踪器和头戴设备在 SlimeVR 服务器中工作正常。
     你的头戴设备在回报位置信息给 SlimeVR 服务器（通常需要 SteamVR 正在运行且通过 SlimeVR 的 SteamVR 驱动连接到 SlimeVR）。
 onboarding-automatic_proportions-requirements-next = 我已阅读
+onboarding-automatic_proportions-check_height-title = 检查你的身高
+onboarding-automatic_proportions-check_height-description = 我们会使用头戴设备回报的高度来推算您的实际身高，但我们仍建议您检查一下数值是否正确。
+# All the text is in bold!
+onboarding-automatic_proportions-check_height-calculation_warning = 请<u>站直</u>后按下按钮以计算身高，按下后您有 3 秒钟来调整姿势。
+onboarding-automatic_proportions-check_height-fetch_height = 我站好了！
+# Context is that the height is unknown
+onboarding-automatic_proportions-check_height-unknown = 未知
+# Shows an element below it
+onboarding-automatic_proportions-check_height-hmd_height1 = 你的头戴设备的高度是
+# Shows an element below it
+onboarding-automatic_proportions-check_height-height1 = 所以你的实际身高是
+onboarding-automatic_proportions-check_height-next_step = 数值没问题
 onboarding-automatic_proportions-start_recording-title = 准备录制运动
 onboarding-automatic_proportions-start_recording-description = 我们现在要记录一些特定的姿势和动作。这些将在下一个屏幕中提示。当按钮被按下时，准备好开始！
 onboarding-automatic_proportions-start_recording-next = 开始录制
@@ -808,6 +881,10 @@ onboarding-automatic_proportions-verify_results-redo = 重新录制
 onboarding-automatic_proportions-verify_results-confirm = 他们是正确的！
 onboarding-automatic_proportions-done-title = 身体数据已测量并保存。
 onboarding-automatic_proportions-done-description = 你的身体比例校准已完成！
+onboarding-automatic_proportions-error_modal =
+    <b>警告：</b> 推算身体比例时发生错误！
+    请 <docs>阅读文档</docs> 或加入我们的 <discord>Discord</discord> 寻求帮助 ^_^
+onboarding-automatic_proportions-error_modal-confirm = 了解！
 
 ## Home
 

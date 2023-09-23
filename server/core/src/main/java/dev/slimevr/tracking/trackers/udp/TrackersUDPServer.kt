@@ -9,18 +9,17 @@ import io.eiren.util.Util
 import io.eiren.util.collections.FastList
 import io.eiren.util.logging.LogManager
 import io.github.axisangles.ktmath.Quaternion.Companion.fromRotationVector
+import io.github.axisangles.ktmath.Vector3
 import org.apache.commons.lang3.ArrayUtils
 import solarxr_protocol.rpc.ResetType
 import java.net.DatagramPacket
 import java.net.DatagramSocket
-import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.NetworkInterface
+import java.net.SocketAddress
 import java.net.SocketTimeoutException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
 import java.util.Random
 import java.util.function.Consumer
 
@@ -31,7 +30,7 @@ class TrackersUDPServer(private val port: Int, name: String, private val tracker
 	Thread(name) {
 	private val random = Random()
 	private val connections: MutableList<UDPDevice> = FastList()
-	private val connectionsByAddress: MutableMap<InetAddress, UDPDevice> = HashMap()
+	private val connectionsByAddress: MutableMap<SocketAddress, UDPDevice> = HashMap()
 	private val connectionsByMAC: MutableMap<String, UDPDevice> = HashMap()
 	private val broadcastAddresses: List<InetSocketAddress> = try {
 		NetworkInterface.getNetworkInterfaces().asSequence().filter {
@@ -42,7 +41,7 @@ class TrackersUDPServer(private val port: Int, name: String, private val tracker
 		}.map {
 			// This ignores IPv6 addresses
 			it.broadcast
-		}.filterNotNull().map { InetSocketAddress(it, this.port) }.toList()
+		}.filter { it != null && it.isSiteLocalAddress }.map { InetSocketAddress(it, this.port) }.toList()
 	} catch (e: Exception) {
 		LogManager.severe("[TrackerServer] Can't enumerate network interfaces", e)
 		emptyList()
@@ -59,7 +58,31 @@ class TrackersUDPServer(private val port: Int, name: String, private val tracker
 		LogManager.info("[TrackerServer] Handshake received from ${handshakePacket.address}:${handshakePacket.port}")
 		val addr = handshakePacket.address
 
-		val connection: UDPDevice = synchronized(connections) { connectionsByAddress[addr] } ?: run {
+		val connection: UDPDevice = synchronized(connections) {
+			connectionsByMAC[handshake.macString]?.apply {
+				connectionsByAddress.remove(address)
+				address = handshakePacket.socketAddress
+				lastPacketNumber = 0
+				ipAddress = addr
+				name = handshake.macString?.let { "udp://$it" }
+				descriptiveName = "udp:/${handshakePacket.address}"
+				firmwareBuild = handshake.firmwareBuild
+				connectionsByAddress[address] = this
+
+				val i = connections.indexOf(this)
+				LogManager
+					.info(
+						"""
+						[TrackerServer] Tracker $i handed over to address ${handshakePacket.socketAddress}.
+						Board type: ${handshake.boardType},
+						imu type: ${handshake.imuType},
+						firmware: ${handshake.firmware} ($firmwareBuild),
+						mac: ${handshake.macString},
+						name: $name
+						""".trimIndent()
+					)
+			}
+		} ?: run {
 			val connection = UDPDevice(
 				handshakePacket.socketAddress,
 				addr,
@@ -86,13 +109,13 @@ class TrackersUDPServer(private val port: Int, name: String, private val tracker
 				if (handshake.macString != null && connectionsByMAC.containsKey(handshake.macString)) {
 					val previousConnection = connectionsByMAC[handshake.macString]!!
 					val i = connections.indexOf(previousConnection)
-					connectionsByAddress.remove(previousConnection.ipAddress)
+					connectionsByAddress.remove(previousConnection.address)
 					previousConnection.lastPacketNumber = 0
 					previousConnection.ipAddress = addr
 					previousConnection.address = handshakePacket.socketAddress
 					previousConnection.name = connection.name
 					previousConnection.descriptiveName = connection.descriptiveName
-					connectionsByAddress[addr] = previousConnection
+					connectionsByAddress[handshakePacket.socketAddress] = previousConnection
 					LogManager
 						.info(
 							"""
@@ -107,7 +130,7 @@ class TrackersUDPServer(private val port: Int, name: String, private val tracker
 				} else {
 					val i = connections.size
 					connections.add(connection)
-					connectionsByAddress[addr] = connection
+					connectionsByAddress[handshakePacket.socketAddress] = connection
 					if (handshake.macString != null) {
 						connectionsByMAC[handshake.macString!!] = connection
 					}
@@ -143,12 +166,16 @@ class TrackersUDPServer(private val port: Int, name: String, private val tracker
 		LogManager.info("[TrackerServer] Sensor $trackerId for ${connection.name} status: $sensorStatus")
 		var imuTracker = connection.getTracker(trackerId)
 		if (imuTracker == null) {
+			var formattedHWID = connection.hardwareIdentifier.replace(":", "").takeLast(5)
+			if (trackerId != 0) {
+				formattedHWID += "_$trackerId"
+			}
+
 			imuTracker = Tracker(
 				connection,
 				VRServer.getNextLocalTrackerId(),
 				connection.name + "/" + trackerId,
-				"IMU Tracker " + MessageDigest.getInstance("SHA-256")
-					.digest(connection.hardwareIdentifier.toByteArray(StandardCharsets.UTF_8)).toString().subSequence(3, 8),
+				"IMU Tracker $formattedHWID",
 				null,
 				trackerNum = trackerId,
 				hasRotation = true,
@@ -193,7 +220,7 @@ class TrackersUDPServer(private val port: Int, name: String, private val tracker
 					socket.receive(received)
 					bb.limit(received.length)
 					bb.rewind()
-					val connection = synchronized(connections) { connectionsByAddress[received.address] }
+					val connection = synchronized(connections) { connectionsByAddress[received.socketAddress] }
 					parser.parse(bb, connection)
 						.filterNotNull()
 						.forEach { processPacket(received, it, connection) }
@@ -223,7 +250,9 @@ class TrackersUDPServer(private val port: Int, name: String, private val tracker
 							} else {
 								conn.timedOut = false
 								for (value in conn.trackers.values) {
-									value.status = TrackerStatus.OK
+									if (value.status == TrackerStatus.DISCONNECTED) {
+										value.status = TrackerStatus.OK
+									}
 								}
 							}
 							if (conn.serialBuffer.isNotEmpty() &&
@@ -276,7 +305,7 @@ class TrackersUDPServer(private val port: Int, name: String, private val tracker
 				tracker = connection?.getTracker(packet.sensorId)
 				if (tracker == null) return
 				var rot17 = packet.rotation
-				rot17 = AXES_OFFSET.times(rot17)
+				rot17 = AXES_OFFSET * rot17
 				when (packet.dataType) {
 					UDPPacket17RotationData.DATA_TYPE_NORMAL -> {
 						tracker.setRotation(rot17)
@@ -297,7 +326,8 @@ class TrackersUDPServer(private val port: Int, name: String, private val tracker
 			is UDPPacket4Acceleration -> {
 				tracker = connection?.getTracker(packet.sensorId)
 				if (tracker == null) return
-				tracker.setAcceleration(packet.acceleration)
+				// Switch x and y around to adjust for different axes
+				tracker.setAcceleration(Vector3(packet.acceleration.y, packet.acceleration.x, packet.acceleration.z))
 			}
 			is UDPPacket10PingPong -> {
 				if (connection == null) return
