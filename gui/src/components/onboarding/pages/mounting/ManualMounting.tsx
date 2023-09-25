@@ -81,7 +81,11 @@ export function ManualMountingPage() {
             <div className="flex flex-row gap-3 mt-auto">
               <Button
                 variant="secondary"
-                to="/onboarding/mounting/choose"
+                to={
+                  state.alonePage
+                    ? '/onboarding/mounting/choose'
+                    : '/onboarding/trackers-assign'
+                }
                 state={state}
               >
                 {l10n.getString('onboarding-previous_step')}

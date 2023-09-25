@@ -22,7 +22,7 @@ import { log } from '@/utils/logging';
 export function ResetTutorialPage() {
   const { isMobile } = useBreakpoint('mobile');
   const { l10n } = useLocalization();
-  const { applyProgress } = useOnboarding();
+  const { applyProgress, state } = useOnboarding();
   const { useAssignedTrackers } = useTrackers();
   const { useRPCPacket, sendRPCPacket } = useWebsocketAPI();
   const [curIndex, setCurIndex] = useState(0);
@@ -129,7 +129,14 @@ export function ResetTutorialPage() {
             {l10n.getString('onboarding-reset_tutorial-explanation')}
           </Typography>
           <div className="flex">
-            <Button variant="secondary" to="/onboarding/mounting/choose">
+            <Button
+              variant="secondary"
+              to={
+                state.alonePage
+                  ? '/onboarding/mounting/choose'
+                  : '/onboarding/mounting/manual'
+              }
+            >
               {l10n.getString('onboarding-previous_step')}
             </Button>
 
