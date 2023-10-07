@@ -10,7 +10,7 @@ import { CheckBox } from '../commons/Checkbox';
 import { CreateBoardConfigDTO } from '../../firmware-tool-api/firmwareToolSchemas';
 import { Dropdown } from '../commons/Dropdown';
 import classNames from 'classnames';
-import { useGetFirmwaresBatteries, useGetFirmwaresBoards } from '../../firmware-tool-api/firmwareToolComponents';
+import { useGetFirmwaresBatteries } from '../../firmware-tool-api/firmwareToolComponents';
 
 export type BoardPinsForm = Omit<CreateBoardConfigDTO, 'type'>;
 
@@ -27,8 +27,7 @@ export function BoardPinsStep({
     defaultConfig,
     updatePins,
   } = useFirmwareTool();
-  const { isFetching, data: batteryTypes } =
-    useGetFirmwaresBatteries({});
+  const { isFetching, data: batteryTypes } = useGetFirmwaresBatteries({});
 
   const { reset, control, watch, formState } = useForm<BoardPinsForm>({
     reValidateMode: 'onChange',

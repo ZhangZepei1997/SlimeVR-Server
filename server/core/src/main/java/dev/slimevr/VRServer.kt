@@ -6,6 +6,7 @@ import dev.slimevr.bridge.Bridge
 import dev.slimevr.bridge.ISteamVRBridge
 import dev.slimevr.config.ConfigManager
 import dev.slimevr.firmware.FirmwareUpdateHandler
+import dev.slimevr.firmware.ISerialFlashingHandler
 import dev.slimevr.osc.OSCHandler
 import dev.slimevr.osc.OSCRouter
 import dev.slimevr.osc.VMCHandler
@@ -45,9 +46,12 @@ class VRServer @JvmOverloads constructor(
 	driverBridgeProvider: SteamBridgeProvider = { _, _ -> null },
 	feederBridgeProvider: (VRServer) -> ISteamVRBridge? = { _ -> null },
 	serialHandlerProvider: (VRServer) -> SerialHandler = { _ -> SerialHandlerStub() },
+	flashingHandlerProvider: (VRServer) -> ISerialFlashingHandler? = { _ -> null },
 	// configPath is used by VRWorkout, do not remove!
 	configPath: String,
 ) : Thread("VRServer") {
+
+
 	@JvmField
 	val configManager: ConfigManager
 
@@ -74,6 +78,8 @@ class VRServer @JvmOverloads constructor(
 
 	@JvmField
 	val serialHandler: SerialHandler
+
+	private var serialFlashingHandler: ISerialFlashingHandler?
 
 	val firmwareUpdateHandler: FirmwareUpdateHandler
 
@@ -103,6 +109,7 @@ class VRServer @JvmOverloads constructor(
 		configManager.loadConfig()
 		deviceManager = DeviceManager(this)
 		serialHandler = serialHandlerProvider(this)
+		serialFlashingHandler = flashingHandlerProvider(this)
 		provisioningHandler = ProvisioningHandler(this)
 		resetHandler = ResetHandler()
 		tapSetupHandler = TapSetupHandler()

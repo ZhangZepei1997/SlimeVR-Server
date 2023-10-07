@@ -6,6 +6,7 @@ import dev.slimevr.tracking.trackers.TrackerStatus
 import dev.slimevr.tracking.trackers.TrackerStatusListener
 import dev.slimevr.tracking.trackers.udp.UDPDevice
 import dev.slimevr.util.LRUCache
+import io.eiren.util.logging.LogManager
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -44,7 +45,7 @@ class FirmwareUpdateHandler(private val server: VRServer) : TrackerStatusListene
     fun startFirmwareUpdateTask(firmwareUrl: String, method: FirmwareUpdateMethod, deviceId: UpdateDeviceId<*>) {
 
         if (this.updatingDevices[deviceId] != null) {
-            println("Device is already updating, Skipping")
+			LogManager.info("[FirmwareUpdateHandler] Device is already updating, Skipping")
             return
         }
         onStatusChange(
@@ -59,7 +60,7 @@ class FirmwareUpdateHandler(private val server: VRServer) : TrackerStatusListene
         // Each update task should either get the future or create a new one
         val firmwareFuture = firmwareCache.getOrPut(firmwareUrl) {
             CompletableFuture.supplyAsync {
-                println("Downloading firmware $firmwareUrl")
+				LogManager.info("[FirmwareUpdateHandler] Downloading firmware $firmwareUrl")
                 downloadFirmware(firmwareUrl)
             }
         }

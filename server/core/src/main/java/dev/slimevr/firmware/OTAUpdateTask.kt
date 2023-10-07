@@ -1,5 +1,6 @@
 package dev.slimevr.firmware
 
+import io.eiren.util.logging.LogManager
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.net.DatagramPacket
@@ -40,7 +41,7 @@ class OTAUpdateTask(
         try {
             DatagramSocket().use { socket ->
                 statusCallback.accept(UpdateStatusEvent(deviceId, FirmwareUpdateStatus.AUTHENTICATING))
-                println("[OTAUpdate] Sending OTA invitation to: $deviceIp")
+				LogManager.info("[OTAUpdate] Sending OTA invitation to: $deviceIp")
 
                 val fileMd5 = bytesToMd5(firmware)
                 val message = "$FLASH $localPort ${firmware.size} $fileMd5\n"
@@ -62,7 +63,7 @@ class OTAUpdateTask(
                 // if we have less than those two args it means that we are in an invalid state
                 if (args.size != 2 || args[0] != "AUTH") return false
 
-                println("[OTAUpdate] Authenticating...")
+				LogManager.info("[OTAUpdate] Authenticating...")
 
                 val authToken = args[1]
                 val signature = bytesToMd5(UUID.randomUUID().toString().toByteArray())
@@ -97,8 +98,8 @@ class OTAUpdateTask(
     private fun upload(): Boolean {
         try {
             ServerSocket(localPort).use { serverSocket ->
-                println("[OTAUpdate] Starting on :$localPort")
-                println("[OTAUpdate] Waiting for device...")
+				LogManager.info("[OTAUpdate] Starting on :$localPort")
+				LogManager.info("[OTAUpdate] Waiting for device...")
 
                 val connection = serverSocket.accept()
                 connection.setSoTimeout(1000)
@@ -106,7 +107,7 @@ class OTAUpdateTask(
                 val dos = DataOutputStream(connection.getOutputStream())
                 val dis = DataInputStream(connection.getInputStream())
 
-                println("[OTAUpdate] Upload size: ${firmware.size} bytes")
+				LogManager.info("[OTAUpdate] Upload size: ${firmware.size} bytes")
                 var offset = 0
                 val chunkSize = 2048
                 while (offset != firmware.size) {
@@ -130,7 +131,7 @@ class OTAUpdateTask(
                     dis.skipNBytes(4)
                 }
 
-                println("[OTAUpdate] Waiting for result...")
+				LogManager.info("[OTAUpdate] Waiting for result...")
                 // We set the timeout of the connection bigger as it can take some time for the MCU
                 // to confirm that everything is ok
                 connection.setSoTimeout(10000)

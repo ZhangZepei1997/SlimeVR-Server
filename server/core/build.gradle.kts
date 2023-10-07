@@ -46,6 +46,7 @@ allprojects {
 		// Use jcenter for resolving dependencies.
 		// You can declare any Maven/Ivy/file repository here.
 		mavenCentral()
+		maven("https://jitpack.io")
 	}
 }
 
@@ -69,6 +70,8 @@ dependencies {
 	implementation("com.melloware:jintellitype:1.+")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 	implementation("it.unimi.dsi:fastutil:8.5.12")
+
+	implementation("com.github.loucass003:EspflashKotlin:0.2.0")
 
 	// Allow the use of reflection
 	implementation(kotlin("reflect"))

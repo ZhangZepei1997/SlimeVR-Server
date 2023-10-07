@@ -6,10 +6,13 @@ import dev.slimevr.Keybinding
 import dev.slimevr.SLIMEVR_IDENTIFIER
 import dev.slimevr.VRServer
 import dev.slimevr.bridge.ISteamVRBridge
+import dev.slimevr.desktop.firmware.DesktopSerialFlashingHandler
 import dev.slimevr.desktop.platform.SteamVRBridge
 import dev.slimevr.desktop.platform.linux.UnixSocketBridge
 import dev.slimevr.desktop.platform.windows.WindowsNamedPipeBridge
 import dev.slimevr.desktop.serial.DesktopSerialHandler
+import dev.slimevr.firmware.ISerialFlashingHandler
+import dev.slimevr.firmware.SerialFlashingHandler
 import dev.slimevr.tracking.trackers.Tracker
 import io.eiren.util.OperatingSystem
 import io.eiren.util.collections.FastList
@@ -121,6 +124,7 @@ fun main(args: Array<String>) {
 			::provideSteamVRBridge,
 			::provideFeederBridge,
 			{ _ -> DesktopSerialHandler() },
+			{ _ -> DesktopSerialFlashingHandler() },
 			configDir
 		)
 		vrServer.start()
