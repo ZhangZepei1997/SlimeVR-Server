@@ -14,7 +14,6 @@ plugins {
 	`java-library`
 }
 
-
 // FIXME: Please replace these to Java 11 as that's what they actually are
 kotlin {
 	jvmToolchain {
@@ -41,15 +40,6 @@ tasks.withType<Javadoc> {
 	options.encoding = "UTF-8"
 }
 
-allprojects {
-	repositories {
-		// Use jcenter for resolving dependencies.
-		// You can declare any Maven/Ivy/file repository here.
-		mavenCentral()
-		maven("https://jitpack.io")
-	}
-}
-
 dependencies {
 	implementation(project(":solarxr-protocol"))
 
@@ -71,11 +61,10 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 	implementation("it.unimi.dsi:fastutil:8.5.12")
 
-	implementation("com.github.loucass003:EspflashKotlin:0.2.0")
+	api("com.github.loucass003:EspflashKotlin:0.2.0")
 
 	// Allow the use of reflection
 	implementation(kotlin("reflect"))
-
 
 	testImplementation(kotlin("test"))
 	// Use JUnit test framework
@@ -84,12 +73,10 @@ dependencies {
 	testImplementation("org.junit.platform:junit-platform-launcher")
 
 	implementation("org.openapitools:openapi-generator-gradle-plugin:6.6.0")
-
 }
 tasks.test {
 	useJUnitPlatform()
 }
-
 
 tasks {
 	val openApiGenerate by getting
@@ -99,7 +86,6 @@ tasks {
 	}
 }
 
-
 openApiGenerate {
 	generatorName.set("kotlin")
 	inputSpec.set("$rootDir/server/core/resources/firmware-tool-api.yaml")
@@ -107,7 +93,9 @@ openApiGenerate {
 	apiPackage.set("dev.slimevr.firmwaretoolapi.api")
 	invokerPackage.set("dev.slimevr.firmwaretoolapi.invoker")
 	modelPackage.set("dev.slimevr.firmwaretoolapi.model")
-	configOptions.set(mapOf(
-		"dateLibrary" to "java17",
-	))
+	configOptions.set(
+		mapOf(
+			"dateLibrary" to "java17"
+		)
+	)
 }

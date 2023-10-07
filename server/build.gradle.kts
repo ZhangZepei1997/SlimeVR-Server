@@ -2,8 +2,11 @@ plugins {
 	id("com.diffplug.spotless")
 }
 
-repositories {
-	mavenCentral()
+allprojects {
+	repositories {
+		mavenCentral()
+		maven("https://jitpack.io")
+	}
 }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
